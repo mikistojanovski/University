@@ -1,0 +1,87 @@
+﻿@model rsweb10.ViewModels.CourseSearchViewModel
+
+@{
+    ViewData["Title"] = "CoursesTeaching";
+}
+
+<h1>Details Of Courses Taught By @ViewBag.Message </h1>
+
+<form asp-controller="Courses" asp-action="CoursesTeaching" method="get">
+<p>
+Programm<select asp-for="CourseProgramme" asp-items="Model.Programme">
+<option value="">All</option>
+</select>
+Semester:<select asp-for="CourseSemester" asp-items="Model.Semesters">
+<option value="">All</option>
+</select>
+Title: <input type="text" asp-for="SearchString" />
+<input type="submit" value="Filter" />
+</p>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+           <th>
+                @Html.DisplayNameFor(model => model.Course[0].Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Course[0].Credits)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Course[0].Semester)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Course[0].Programme)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Course[0].EducationLevel)
+            </th>
+            <th>
+                Check Students Enrolled
+            </th>
+        
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Course)
+        {
+            <tr>
+              <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Credits)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Semester)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Programme)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EducationLevel)
+            </td>
+                <td>
+                    <a asp-controller="Enrollments" asp-action="StudentsEnrolledAtCourse" asp-route-id="@item.CourseID" asp-route-teacher="@ViewBag.Message">
+                        Check Students Enrolled
+                     </a>
+                </td>
+                <td>
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                     {
+                         <a asp-action="Edit" asp-route-id="@item.CourseID">Edit</a>
+                         @Html.Raw("|");
+                     }
+                    <a asp-action="Details" asp-route-id="@item.CourseID">Details</a>
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                     {
+                         @Html.Raw("|");
+                          <a asp-action="Delete" asp-route-id="@item.CourseID">Delete</a>
+                     }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
